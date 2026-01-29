@@ -180,10 +180,12 @@ class RegisterViewModel: ObservableObject {
             
             self.alertMessage = "Registration successful! Welcome, \(self.fullName)!"
             self.showAlert = true
-            self.registrationSuccess = true
-            
             print("User registered: \(self.email)")
         }
+    }
+    
+    func navigateToMainView() {
+        coordinator.showMainView()
     }
     
     func togglePasswordVisibility() {

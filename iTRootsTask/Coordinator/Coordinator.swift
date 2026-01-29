@@ -69,12 +69,17 @@ protocol AppCoordinator {
     func showMainView()
     func dismissModal()
     func popToRoot()
+    func pop()
 }
 
 // MARK: - Coordinator Implementation
 
 @MainActor
 final class DefaultAppCoordinator: AppCoordinator {
+    func pop() {
+        navigationController.pop()
+    }
+    
    
     
     let navigationController = NavigationController()

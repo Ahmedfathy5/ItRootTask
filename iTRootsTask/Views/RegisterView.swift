@@ -179,7 +179,7 @@ struct RegisterView: View {
                 message: Text(viewModel.alertMessage),
                 dismissButton: .default(Text("OK")) {
                     if viewModel.registrationSuccess {
-                        presentationMode.wrappedValue.dismiss()
+                        viewModel.navigateToMainView()
                     }
                 }
             )
