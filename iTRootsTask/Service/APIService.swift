@@ -13,6 +13,7 @@ enum NetworkError: Error {
     case decodingError
     case serverError(String)
     case respones
+    case tlsError(String)
     case unknown
     
     var localizedDescription: String {
@@ -29,6 +30,8 @@ enum NetworkError: Error {
             return "An unknown error occurred"
         case .respones:
             return  "Error with the response"
+        case .tlsError(let message):
+            return "Secure connection error: \(message)"
         }
     }
 }
@@ -44,14 +47,37 @@ class APIService {
         }
         
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
+            let (data, response) = try await URLSession.shared.data(from: url)
             
-            let posts = try JSONDecoder().decode([Post].self, from: data)
-            return posts
+            if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+                throw NetworkError.serverError("Server returned status code \(http.statusCode)")
+            }
             
+            do {
+                let posts = try JSONDecoder().decode([Post].self, from: data)
+                return posts
+            } catch {
+                throw NetworkError.decodingError
+            }
+        } catch let urlError as URLError {
+            switch urlError.code {
+            case .notConnectedToInternet, .timedOut, .networkConnectionLost:
+                throw NetworkError.noInternet
+            case .secureConnectionFailed,
+                 .serverCertificateUntrusted,
+                 .serverCertificateHasBadDate,
+                 .serverCertificateHasUnknownRoot,
+                 .clientCertificateRejected,
+                 .clientCertificateRequired,
+                 .cannotLoadFromNetwork:
+                throw NetworkError.tlsError("\(urlError.code.rawValue) \(urlError.localizedDescription)")
+            default:
+                throw NetworkError.unknown
+            }
+        } catch let netErr as NetworkError {
+            throw netErr
         } catch {
-            print("error is \(error.localizedDescription)")
-            return []
+            throw NetworkError.unknown
         }
     }
 }

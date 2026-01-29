@@ -43,14 +43,22 @@ class MainViewModel: ObservableObject {
             self.posts = fetchedPosts
             print("Successfully fetched and assigned \(fetchedPosts.count) posts to view model")
         } catch {
-            
+            // Surface the error to the UI
+            if let netErr = error as? NetworkError {
+                self.errorMessage = netErr.localizedDescription
+            } else {
+                self.errorMessage = error.localizedDescription
+            }
+            self.posts = []
+            self.showError = true
+            print("Failed to fetch posts: \(self.errorMessage ?? "Unknown error")")
         }
         isLoadingPosts = false
         print("Fetch posts completed. Posts count: \(posts.count)")
     }
     
     func retryFetch() {
-        print(" Retrying fetch...")
+        print("Retrying fetch...")
         Task {
             try await fetchPosts()
         }
@@ -61,3 +69,4 @@ class MainViewModel: ObservableObject {
         coordinator.popToRoot()
     }
 }
+
