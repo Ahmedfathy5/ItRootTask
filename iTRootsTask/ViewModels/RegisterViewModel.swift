@@ -10,7 +10,7 @@ import Combine
 
 class RegisterViewModel: ObservableObject {
     
-    private let coordinator: Coordinator
+    let coordinator: AppCoordinator
     @Published var fullName: String = ""
     @Published var email: String = ""
     @Published var phoneNumber: String = ""
@@ -34,7 +34,7 @@ class RegisterViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     
-    init(coordinator: Coordinator) {
+    init(coordinator: AppCoordinator) {
         self.coordinator = coordinator
         setupValidation()
     }

@@ -10,7 +10,7 @@ import Combine
 
 class LoginViewModel: ObservableObject {
     
-    let coordinator: Coordinator
+    let coordinator: AppCoordinator
     @Published var phoneNumber: String = ""
     @Published var password: String = ""
     @Published var isPasswordVisible: Bool = false
@@ -24,7 +24,7 @@ class LoginViewModel: ObservableObject {
     private let country: PhoneNumberCountry = .egypt
     private var cancellables = Set<AnyCancellable>()
     
-    init(coordinator: Coordinator) {
+    init(coordinator: AppCoordinator) {
         self.coordinator = coordinator
         setupValidation()
     }
@@ -135,8 +135,8 @@ class LoginViewModel: ObservableObject {
         }
     }
     
-    func register() {
-        coordinator.navigateToRegister()
+    func navigateToRegisterView() {
+        coordinator.showRegister()
     }
     
     func togglePasswordVisibility() {

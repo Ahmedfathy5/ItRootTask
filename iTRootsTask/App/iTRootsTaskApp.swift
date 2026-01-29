@@ -6,22 +6,20 @@
 //
 
 import SwiftUI
+import ImperativeNavigation
 import Combine
 
 @main
 struct LoginApp: App {
     @StateObject private var appState = AppState()
     @StateObject private var localizationManager = LocalizationManager()
-    private let coordinator = DefaultCoordinator()
+    private let coordinator = DefaultAppCoordinator()
     
     var body: some Scene {
         WindowGroup {
-            NavigationView(
-                coordinator: coordinator,
-                root: {
-                    RootView(coordinator: coordinator)
-                }
-            )
+            NavigationView(controller: coordinator.navigationController, root: {
+                RootView(coordinator: coordinator)
+            })
             .environmentObject(appState)
             .environment(\.locale, Locale(identifier: localizationManager.appLanguage))
             .environmentObject(localizationManager)
@@ -46,14 +44,13 @@ class AppState: ObservableObject {
 
 struct RootView: View {
     @EnvironmentObject var appState: AppState
-    let coordinator: DefaultCoordinator
+    let coordinator: AppCoordinator
 
     var body: some View {
         Group {
             if appState.isLoggedIn {
                 MainView(viewModel: MainViewModel(coordinator: coordinator), isLoggedIn: .constant(false))
             } else {
-                // Inject the same coordinator into LoginViewModel
                 LoginView(viewModel: LoginViewModel(coordinator: coordinator))
                     .onAppear {
                         appState.isLoggedIn = false

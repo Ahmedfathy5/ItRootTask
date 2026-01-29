@@ -1,0 +1,15 @@
+{
+  "originHash" : "438a6d947f58eb6ca0e5a98372616947fcee9ced3321fba3d1816dd1862d287a",
+  "pins" : [
+    {
+      "identity" : "swiftui-imperative-navigation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ahmdmhasn/swiftui-imperative-navigation.git",
+      "state" : {
+        "revision" : "b954d0f3989f926c94b301c1f7a116d74a1680aa",
+        "version" : "0.3.0"
+      }
+    }
+  ],
+  "version" : 3
+}

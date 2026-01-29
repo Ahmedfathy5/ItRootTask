@@ -152,7 +152,7 @@ struct LoginView: View {
                         .padding(.top, 10)
                         
                         Button {
-                            viewModel.register()
+                            viewModel.navigateToRegisterView()
 
                         } label: {
                             Text("Register")
@@ -198,14 +198,14 @@ struct LoginView: View {
                     message: Text(viewModel.alertMessage),
                     dismissButton: .default(Text("OK")) {
                         if viewModel.loginSuccess {
-                            viewModel.coordinator.navigateToMainView()
+                            viewModel.coordinator.showMainView()
                         }
                     }
                 )
             }
             .onChange(of: isRegistrationSuccess) { success in
                 if success {
-                    viewModel.coordinator.navigateToMainView()
+                    viewModel.coordinator.showMainView()
                 }
             }
         

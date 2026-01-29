@@ -10,7 +10,7 @@ import Combine
 
 class MainViewModel: ObservableObject {
     
-    private let coordinator: Coordinator
+    private let coordinator: AppCoordinator
     @Published var selectedTab: Int = 0
     @Published var posts: [Post] = []
     @Published var isLoadingPosts: Bool = false
@@ -26,7 +26,7 @@ class MainViewModel: ObservableObject {
         UserDefaultsService.shared.getUser()
     }
     
-    init(coordinator: Coordinator) {
+    init(coordinator: AppCoordinator) {
         self.coordinator = coordinator
         Task {
             try await fetchPosts()
@@ -58,7 +58,6 @@ class MainViewModel: ObservableObject {
     
     func logout() {
         UserDefaultsService.shared.logout()
-        
-        print(" User logged out")
+        coordinator.popToRoot()
     }
 }
