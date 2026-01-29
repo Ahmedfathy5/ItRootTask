@@ -34,6 +34,10 @@ final class UserDefaultsService {
         return UserDefaults.standard.bool(forKey: isLoggedInKey)
     }
     
+    func setLoggedIn(_ loggedIn: Bool) {
+        UserDefaults.standard.set(loggedIn, forKey: isLoggedInKey)
+    }
+    
     func logout() {
         UserDefaults.standard.removeObject(forKey: userKey)
         UserDefaults.standard.set(false, forKey: isLoggedInKey)

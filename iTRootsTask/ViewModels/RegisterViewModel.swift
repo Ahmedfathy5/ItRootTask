@@ -177,6 +177,7 @@ class RegisterViewModel: ObservableObject {
             )
             
             UserDefaultsService.shared.saveUser(newUser)
+            coordinator.showMainView()
             
             self.alertMessage = "Registration successful! Welcome, \(self.fullName)!"
             self.showAlert = true
@@ -184,9 +185,6 @@ class RegisterViewModel: ObservableObject {
         }
     }
     
-    func navigateToMainView() {
-        coordinator.showMainView()
-    }
     
     func togglePasswordVisibility() {
         isPasswordVisible.toggle()

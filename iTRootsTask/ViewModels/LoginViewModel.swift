@@ -109,6 +109,9 @@ class LoginViewModel: ObservableObject {
             
             if let savedUser = UserDefaultsService.shared.getUser() {
                 if savedUser.phoneNumber == self.phoneNumber && savedUser.password == self.password {
+                    // Ensure login state is persisted
+                    UserDefaultsService.shared.saveUser(savedUser)
+                    
                     self.alertMessage = "Welcome back, \(savedUser.fullName)!"
                     self.showAlert = true
                     self.loginSuccess = true
