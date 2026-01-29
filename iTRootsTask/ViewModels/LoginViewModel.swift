@@ -8,9 +8,9 @@
 import Foundation
 import Combine
 
-// MARK: - Login View Model
 class LoginViewModel: ObservableObject {
-    // MARK: - Published Properties
+    
+    let coordinator: Coordinator
     @Published var phoneNumber: String = ""
     @Published var password: String = ""
     @Published var isPasswordVisible: Bool = false
@@ -21,18 +21,15 @@ class LoginViewModel: ObservableObject {
     @Published var alertMessage: String = ""
     @Published var loginSuccess: Bool = false
     
-    // MARK: - Properties
     private let country: PhoneNumberCountry = .egypt
     private var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Initialization
-    init() {
+    init(coordinator: Coordinator) {
+        self.coordinator = coordinator
         setupValidation()
     }
     
-    // MARK: - Setup
     private func setupValidation() {
-        // Real-time phone number validation
         $phoneNumber
             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .sink { [weak self] phone in
@@ -45,7 +42,6 @@ class LoginViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Real-time password validation
         $password
             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .sink { [weak self] pwd in
@@ -59,19 +55,17 @@ class LoginViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    // MARK: - Computed Properties
     var formattedPhoneNumber: String {
         country.validator.format(phoneNumber)
     }
     
     var isFormValid: Bool {
         return phoneNumberError == nil &&
-               passwordError == nil &&
-               !phoneNumber.isEmpty &&
-               !password.isEmpty
+        passwordError == nil &&
+        !phoneNumber.isEmpty &&
+        !password.isEmpty
     }
     
-    // MARK: - Validation Methods
     private func validatePhoneNumber() {
         let isValid = country.validator.validate(phoneNumber)
         
@@ -96,13 +90,10 @@ class LoginViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Actions
     func signIn() {
-        // Clear previous errors
         phoneNumberError = nil
         passwordError = nil
         
-        // Validate all fields
         validatePhoneNumber()
         validatePassword()
         
@@ -112,23 +103,19 @@ class LoginViewModel: ObservableObject {
         
         isLoading = true
         
-        // Simulate API call
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             guard let self = self else { return }
             self.isLoading = false
             
-            // Check if user exists in local storage
             if let savedUser = UserDefaultsService.shared.getUser() {
                 if savedUser.phoneNumber == self.phoneNumber && savedUser.password == self.password {
                     self.alertMessage = "Welcome back, \(savedUser.fullName)!"
                     self.showAlert = true
                     self.loginSuccess = true
-                    print("✅ User logged in: \(savedUser.email)")
                     return
                 }
             }
             
-            // Mock authentication for demo (you can remove this in production)
             if self.phoneNumber == "01234567890" && self.password == "password" {
                 let demoUser = User(
                     id: UUID().uuidString,
@@ -141,7 +128,6 @@ class LoginViewModel: ObservableObject {
                 self.alertMessage = "Login successful!"
                 self.showAlert = true
                 self.loginSuccess = true
-                print("✅ User logged in: \(self.phoneNumber)")
             } else {
                 self.alertMessage = "Invalid phone number or password"
                 self.showAlert = true
@@ -150,7 +136,7 @@ class LoginViewModel: ObservableObject {
     }
     
     func register() {
-        print("🔄 Navigate to registration screen")
+        coordinator.navigateToRegister()
     }
     
     func togglePasswordVisibility() {

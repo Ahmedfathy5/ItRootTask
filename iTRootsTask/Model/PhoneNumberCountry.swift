@@ -9,14 +9,14 @@ import Foundation
 
 public struct PhoneNumberCountry: Identifiable, Sendable {
     public var id: String { code }
-
+    
     public let name: String
     public let flag: String
     public let code: String
     public let dial_code: String
     public let phoneLength: Int
     public let validator: PhoneNumberValidator.Type
-
+    
     public init(
         name: String,
         flag: String,
@@ -44,7 +44,7 @@ public extension PhoneNumberCountry {
     static var all: [PhoneNumberCountry] {
         [.egypt]
     }
-
+    
     static var egypt: PhoneNumberCountry {
         PhoneNumberCountry(
             name: "Egypt",

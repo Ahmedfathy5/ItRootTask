@@ -7,7 +7,6 @@
 
 import Foundation
 
-// MARK: - Email Validator
 struct EmailValidator {
     static func validate(_ email: String) -> Bool {
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
@@ -28,14 +27,12 @@ struct EmailValidator {
     }
 }
 
-// MARK: - Password Validator
 struct PasswordValidator {
     static func validate(_ password: String, minLength: Int = 6) -> Bool {
         return password.count >= minLength
     }
     
     static func validateStrong(_ password: String) -> Bool {
-        // At least 8 characters, one uppercase, one lowercase, one number
         let passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"
         let passwordPredicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
         return passwordPredicate.evaluate(with: password)
@@ -63,12 +60,10 @@ struct PasswordValidator {
     }
 }
 
-// MARK: - Full Name Validator
 struct FullNameValidator {
     static func validate(_ name: String) -> Bool {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        // At least 2 characters, contains at least 2 words
         let components = trimmedName.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
         return components.count >= 2 && trimmedName.count >= 2
     }

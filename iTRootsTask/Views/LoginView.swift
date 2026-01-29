@@ -7,32 +7,30 @@
 
 import SwiftUI
 
-// MARK: - Login View
 struct LoginView: View {
     
     @EnvironmentObject var localizationManager: LocalizationManager
-
-    @StateObject private var viewModel = LoginViewModel()
-    @State private var showRegister = false
-    @State private var navigateToMain = false
+    
+    @StateObject private var viewModel: LoginViewModel
     @State private var isRegistrationSuccess = false
     
+    init(viewModel: LoginViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+    }
+    
     var body: some View {
-        NavigationView {
             ZStack {
-                // Background gradient
                 LinearGradient(
                     gradient: Gradient(colors: [Color.blue.opacity(0.6), Color.purple.opacity(0.6)]),
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
-
+                
                 ScrollView {
                     VStack(spacing: 25) {
                         Spacer(minLength: 60)
                         
-                        // App Logo/Title
                         VStack(spacing: 10) {
                             Image(systemName: "person.circle.fill")
                                 .resizable()
@@ -50,7 +48,6 @@ struct LoginView: View {
                         }
                         .padding(.bottom, 40)
                         
-                        // Phone Number Field
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text("Phone Number")
@@ -93,7 +90,6 @@ struct LoginView: View {
                         }
                         .padding(.horizontal, 30)
                         
-                        // Password Field
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Password")
                                 .font(.subheadline)
@@ -131,7 +127,6 @@ struct LoginView: View {
                         }
                         .padding(.horizontal, 30)
                         
-                        // Sign In Button
                         Button(action: {
                             viewModel.signIn()
                         }) {
@@ -156,10 +151,10 @@ struct LoginView: View {
                         .padding(.horizontal, 30)
                         .padding(.top, 10)
                         
-                        // Register Button
-                        Button(action: {
-                            showRegister = true
-                        }) {
+                        Button {
+                            viewModel.register()
+
+                        } label: {
                             Text("Register")
                                 .font(.headline)
                                 .fontWeight(.semibold)
@@ -192,17 +187,9 @@ struct LoginView: View {
                     }
                     .padding(.trailing, 20)
                     .padding(.top, 10)
-
+                    
                 }
-                
-                // Navigation Links
-                NavigationLink(destination: MainView(isLoggedIn: $navigateToMain), isActive: $navigateToMain) {
-                    EmptyView()
-                }
-                
-                NavigationLink(destination: RegisterView(isRegistrationSuccess: $isRegistrationSuccess), isActive: $showRegister) {
-                    EmptyView()
-                }
+                                
             }
             .navigationBarHidden(true)
             .alert(isPresented: $viewModel.showAlert) {
@@ -211,24 +198,16 @@ struct LoginView: View {
                     message: Text(viewModel.alertMessage),
                     dismissButton: .default(Text("OK")) {
                         if viewModel.loginSuccess {
-                            navigateToMain = true
+                            viewModel.coordinator.navigateToMainView()
                         }
                     }
                 )
             }
             .onChange(of: isRegistrationSuccess) { success in
                 if success {
-                    navigateToMain = true
-                    isRegistrationSuccess = false
+                    viewModel.coordinator.navigateToMainView()
                 }
             }
-        }
-    }
-}
-
-// MARK: - Preview
-struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        LoginView()
+        
     }
 }

@@ -28,7 +28,7 @@ enum NetworkError: Error {
         case .unknown:
             return "An unknown error occurred"
         case .respones:
-          return  "Error with the response"
+            return  "Error with the response"
         }
     }
 }
@@ -38,7 +38,6 @@ class APIService {
     
     private init() {}
     
-    // MARK: - Fetch Posts
     func fetchPosts() async throws -> [Post] {
         guard let url = URL(string: "https://jsonplaceholder.typicode.com/posts") else {
             throw NetworkError.invalidURL
@@ -46,7 +45,7 @@ class APIService {
         
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
-
+            
             let posts = try JSONDecoder().decode([Post].self, from: data)
             return posts
             

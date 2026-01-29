@@ -7,15 +7,16 @@
 
 import SwiftUI
 
-// MARK: - Register View
 struct RegisterView: View {
-    @StateObject private var viewModel = RegisterViewModel()
+    @StateObject private var viewModel: RegisterViewModel
     @Environment(\.presentationMode) var presentationMode
-    @Binding var isRegistrationSuccess: Bool
+    
+    init(viewModel: RegisterViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+    }
     
     var body: some View {
         ZStack {
-            // Background gradient
             LinearGradient(
                 gradient: Gradient(colors: [Color.purple.opacity(0.6), Color.blue.opacity(0.6)]),
                 startPoint: .topLeading,
@@ -27,7 +28,6 @@ struct RegisterView: View {
                 VStack(spacing: 20) {
                     Spacer(minLength: 40)
                     
-                    // Header
                     VStack(spacing: 10) {
                         Image(systemName: "person.badge.plus.fill")
                             .resizable()
@@ -56,7 +56,6 @@ struct RegisterView: View {
                         isSecure: false
                     )
                     
-                    // Email Field
                     FormField(
                         title: "Email",
                         icon: "envelope.fill",
@@ -68,7 +67,6 @@ struct RegisterView: View {
                     )
                     .autocapitalization(.none)
                     
-                    // Phone Number Field
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             Text("Phone Number")
@@ -111,7 +109,6 @@ struct RegisterView: View {
                     }
                     .padding(.horizontal, 30)
                     
-                    // Password Field
                     SecureFormField(
                         title: "Password",
                         icon: "lock.fill",
@@ -122,7 +119,6 @@ struct RegisterView: View {
                         toggleAction: viewModel.togglePasswordVisibility
                     )
                     
-                    // Confirm Password Field
                     SecureFormField(
                         title: "Confirm Password",
                         icon: "lock.fill",
@@ -133,7 +129,6 @@ struct RegisterView: View {
                         toggleAction: viewModel.toggleConfirmPasswordVisibility
                     )
                     
-                    // Register Button
                     Button(action: {
                         viewModel.register()
                     }) {
@@ -184,7 +179,6 @@ struct RegisterView: View {
                 message: Text(viewModel.alertMessage),
                 dismissButton: .default(Text("OK")) {
                     if viewModel.registrationSuccess {
-                        isRegistrationSuccess = true
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
@@ -193,7 +187,6 @@ struct RegisterView: View {
     }
 }
 
-// MARK: - Form Field Component
 struct FormField: View {
     let title: String
     let icon: String
@@ -237,7 +230,6 @@ struct FormField: View {
     }
 }
 
-// MARK: - Secure Form Field Component
 struct SecureFormField: View {
     let title: String
     let icon: String
@@ -285,7 +277,6 @@ struct SecureFormField: View {
     }
 }
 
-// MARK: - Error Text Component
 struct ErrorText: View {
     let error: String
     
@@ -298,12 +289,5 @@ struct ErrorText: View {
         }
         .foregroundColor(.red)
         .padding(.leading, 5)
-    }
-}
-
-// MARK: - Preview
-struct RegisterView_Previews: PreviewProvider {
-    static var previews: some View {
-        RegisterView(isRegistrationSuccess: .constant(false))
     }
 }

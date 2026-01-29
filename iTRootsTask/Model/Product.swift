@@ -7,7 +7,6 @@
 
 import Foundation
 
-// MARK: - Product Model (for static data)
 struct Product: Identifiable {
     let id: String
     let name: String
@@ -24,7 +23,6 @@ struct Product: Identifiable {
     }
 }
 
-// MARK: - API Post Model (for online API data)
 struct Post: Identifiable, Codable {
     let userId: Int
     let id: Int

@@ -8,9 +8,9 @@
 import Foundation
 import Combine
 
-// MARK: - Register View Model
 class RegisterViewModel: ObservableObject {
-    // MARK: - Published Properties
+    
+    private let coordinator: Coordinator
     @Published var fullName: String = ""
     @Published var email: String = ""
     @Published var phoneNumber: String = ""
@@ -19,31 +19,27 @@ class RegisterViewModel: ObservableObject {
     @Published var isPasswordVisible: Bool = false
     @Published var isConfirmPasswordVisible: Bool = false
     
-    // Error messages
     @Published var fullNameError: String?
     @Published var emailError: String?
     @Published var phoneNumberError: String?
     @Published var passwordError: String?
     @Published var confirmPasswordError: String?
     
-    // State
     @Published var isLoading: Bool = false
     @Published var showAlert: Bool = false
     @Published var alertMessage: String = ""
     @Published var registrationSuccess: Bool = false
     
-    // MARK: - Properties
     private let country: PhoneNumberCountry = .egypt
     private var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Initialization
-    init() {
+    
+    init(coordinator: Coordinator) {
+        self.coordinator = coordinator
         setupValidation()
     }
     
-    // MARK: - Setup
     private func setupValidation() {
-        // Real-time full name validation
         $fullName
             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .sink { [weak self] name in
@@ -55,7 +51,6 @@ class RegisterViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Real-time email validation
         $email
             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .sink { [weak self] email in
@@ -67,7 +62,6 @@ class RegisterViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Real-time phone number validation
         $phoneNumber
             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .sink { [weak self] phone in
@@ -79,7 +73,6 @@ class RegisterViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Real-time password validation
         $password
             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .sink { [weak self] pwd in
@@ -91,7 +84,6 @@ class RegisterViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Real-time confirm password validation
         $confirmPassword
             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .sink { [weak self] confirmPwd in
@@ -104,21 +96,19 @@ class RegisterViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    // MARK: - Computed Properties
     var isFormValid: Bool {
         return fullNameError == nil &&
-               emailError == nil &&
-               phoneNumberError == nil &&
-               passwordError == nil &&
-               confirmPasswordError == nil &&
-               !fullName.isEmpty &&
-               !email.isEmpty &&
-               !phoneNumber.isEmpty &&
-               !password.isEmpty &&
-               !confirmPassword.isEmpty
+        emailError == nil &&
+        phoneNumberError == nil &&
+        passwordError == nil &&
+        confirmPasswordError == nil &&
+        !fullName.isEmpty &&
+        !email.isEmpty &&
+        !phoneNumber.isEmpty &&
+        !password.isEmpty &&
+        !confirmPassword.isEmpty
     }
     
-    // MARK: - Validation Methods
     private func validateFullName() {
         fullNameError = FullNameValidator.getError(for: fullName)
     }
@@ -146,7 +136,6 @@ class RegisterViewModel: ObservableObject {
     private func validatePassword() {
         passwordError = PasswordValidator.getError(for: password, requireStrong: false)
         
-        // Revalidate confirm password if it's already filled
         if !confirmPassword.isEmpty {
             validateConfirmPassword()
         }
@@ -162,9 +151,7 @@ class RegisterViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Actions
     func register() {
-        // Validate all fields
         validateFullName()
         validateEmail()
         validatePhoneNumber()
@@ -177,12 +164,10 @@ class RegisterViewModel: ObservableObject {
         
         isLoading = true
         
-        // Simulate API call
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             guard let self = self else { return }
             self.isLoading = false
             
-            // Create new user
             let newUser = User(
                 id: UUID().uuidString,
                 fullName: self.fullName,
@@ -191,15 +176,13 @@ class RegisterViewModel: ObservableObject {
                 password: self.password
             )
             
-            // Save user locally
             UserDefaultsService.shared.saveUser(newUser)
             
-            // Show success message
             self.alertMessage = "Registration successful! Welcome, \(self.fullName)!"
             self.showAlert = true
             self.registrationSuccess = true
             
-            print("✅ User registered: \(self.email)")
+            print("User registered: \(self.email)")
         }
     }
     

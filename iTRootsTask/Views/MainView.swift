@@ -8,8 +8,14 @@
 import SwiftUI
 
 struct MainView: View {
-    @StateObject private var viewModel = MainViewModel()
+    @StateObject private var viewModel: MainViewModel
     @Binding var isLoggedIn: Bool
+    
+    init(viewModel: MainViewModel, isLoggedIn: Binding<Bool>) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self._isLoggedIn = isLoggedIn
+    }
+    
     
     var body: some View {
         TabView(selection: $viewModel.selectedTab) {
@@ -44,12 +50,10 @@ struct MainView: View {
     }
 }
 
-// MARK: - Home Tab View
 struct HomeTabView: View {
     @ObservedObject var viewModel: MainViewModel
     
     var body: some View {
-        NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
                     // User Greeting
@@ -76,7 +80,6 @@ struct HomeTabView: View {
                         .padding(.top)
                     }
                     
-                    // Horizontal Scroll Section
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Featured Products")
                             .font(.title2)
@@ -93,7 +96,6 @@ struct HomeTabView: View {
                         }
                     }
                     
-                    // Vertical Scroll Section
                     VStack(alignment: .leading, spacing: 10) {
                         Text("All Products")
                             .font(.title2)
@@ -112,11 +114,10 @@ struct HomeTabView: View {
                 .padding(.bottom, 20)
             }
             .navigationTitle("Home")
-        }
+        
     }
 }
 
-// MARK: - Horizontal Product Card
 struct HorizontalProductCard: View {
     let product: Product
     
@@ -155,7 +156,6 @@ struct HorizontalProductCard: View {
     }
 }
 
-// MARK: - Vertical Product Card
 struct VerticalProductCard: View {
     let product: Product
     
@@ -197,12 +197,11 @@ struct VerticalProductCard: View {
     }
 }
 
-// MARK: - Posts Tab View
 struct PostsTabView: View {
     @ObservedObject var viewModel: MainViewModel
     
     var body: some View {
-        NavigationView {
+  
             ZStack {
                 if viewModel.isLoadingPosts {
                     VStack(spacing: 20) {
@@ -232,21 +231,19 @@ struct PostsTabView: View {
             .navigationTitle("Posts")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            Task {
-                                try  await viewModel.fetchPosts()
-                            }
-                        }) {
-                            Image(systemName: "arrow.clockwise")
+                    Button(action: {
+                        Task {
+                            try  await viewModel.fetchPosts()
                         }
-                        .disabled(viewModel.isLoadingPosts)
+                    }) {
+                        Image(systemName: "arrow.clockwise")
                     }
+                    .disabled(viewModel.isLoadingPosts)
+                }
             }
         }
-    }
 }
 
-// MARK: - Post Row View
 struct PostRowView: View {
     let post: Post
     
@@ -280,7 +277,6 @@ struct PostRowView: View {
     }
 }
 
-// MARK: - No Internet View
 struct NoInternetView: View {
     let errorMessage: String
     let retryAction: () -> Void
